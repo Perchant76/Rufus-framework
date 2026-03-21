@@ -1,0 +1,26 @@
+# Generated files
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/gen/
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temp scan output files
+/tmp/wapiti_*.json
+/tmp/testssl_*.json
+/tmp/whatweb_*.json
+/tmp/nuclei_*.jsonl

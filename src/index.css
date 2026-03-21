@@ -1,0 +1,65 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg0: #080b0f;
+  --bg1: #0d1117;
+  --bg2: #111820;
+  --bg3: #161f2b;
+  --bg4: #1c2839;
+  --border: #1e2d3d;
+  --border-hi: #2a3f56;
+  --text: #c9d6e3;
+  --text-dim: #5d7a96;
+  --text-hi: #e8f0f8;
+  --accent: #00d4ff;
+  --accent-dim: rgba(0,212,255,.1);
+  --red: #ff3b5c;
+  --orange: #ff7b2c;
+  --yellow: #f5c518;
+  --green: #22c55e;
+  --purple: #a855f7;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-ui: 'Syne', sans-serif;
+  --r: 6px;
+  --r-lg: 10px;
+  --transition: 150ms ease;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg0);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-hi); }
+
+/* Selection */
+::selection { background: rgba(0, 212, 255, 0.2); }
+
+/* Animations */
+@keyframes blink { 0%,100% { opacity:1 } 50% { opacity:.3 } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 currentColor; opacity:1 } 50% { box-shadow: 0 0 0 4px transparent; opacity:.7 } }
+@keyframes slide-in { from { opacity:0; transform:translateY(4px) } to { opacity:1; transform:translateY(0) } }
+@keyframes fade-in { from { opacity:0 } to { opacity:1 } }
+
+.animate-in { animation: slide-in 0.2s ease; }
+
+/* Severity colors */
+.sev-critical { color: var(--red); }
+.sev-high { color: var(--orange); }
+.sev-medium { color: var(--yellow); }
+.sev-low { color: var(--green); }
+.sev-info { color: var(--accent); }

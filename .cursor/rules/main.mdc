@@ -1,0 +1,77 @@
+---
+description: ProbeScan pentest framework — always apply
+alwaysApply: true
+---
+
+# ProbeScan — Professional Penetration Testing Framework
+
+## Stack (never deviate)
+- Backend: Rust via Tauri 2.x
+- Frontend: React 18 + Vite (inside Tauri webview)
+- Storage: SQLite via sqlx with migrations
+- External tools: tokio::process::Command async subprocesses
+- Styling: CSS custom properties, JetBrains Mono + Syne fonts
+- No CLI interface, no plugin system, no proxy
+
+## Rust Conventions
+- All Tauri commands: `#[tauri::command] async fn name() -> Result<T, String>`
+- Convert errors with `.map_err(|e| e.to_string())`
+- Stream subprocess stdout via Tauri events: `app_handle.emit("event", payload)`
+- State managed via `tauri::State<Mutex<AppState>>`
+- All DB access through `db::` module functions
+- Use `uuid::Uuid::new_v4().to_string()` for all IDs
+
+## React Conventions  
+- Functional components + hooks only
+- All API calls via `invoke()` from `@tauri-apps/api/core`
+- Listen to streaming events via `listen()` from `@tauri-apps/api/event`
+- Types defined in `src/types/index.ts`
+- Dark theme only — CSS variables defined in `src/index.css`
+- No external UI libraries — custom components only
+
+## Vulnerability Schema (always use this exact shape)
+```typescript
+interface VulnFinding {
+  id: string;
+  scan_id: string;
+  source_tool: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO';
+  title: string;
+  description: string;
+  affected_url: string;
+  affected_port: number | null;
+  cve_references: string[];
+  cvss_score: number | null;
+  evidence: string;
+  remediation: string;
+  timestamp: string;
+  in_scope: boolean;
+}
+```
+
+## Tool Integration Rules
+- subfinder: JSON output (`-oJ`), passive + CT logs
+- feroxbuster: JSON output (`--json`)
+- katana: JSON output (`-json`)
+- nmap: XML output → parse with roxmltree
+- nuclei: JSONL output (`-json`)
+- testssl.sh: JSON output (`--jsonfile`)
+- whatweb: JSON output (`--log-json`)
+- ALL tools must support non-interactive execution
+- Scope check ALWAYS happens in Rust before active scan
+
+## File Structure
+```
+src-tauri/src/
+  main.rs          — Tauri setup, command registration
+  commands/        — One file per feature area
+  db/              — All SQLite operations
+  scanner/         — Subprocess runner, scope engine
+  parsers/         — One parser per tool
+src/
+  components/tabs/ — One component per tab
+  components/ui/   — Shared UI primitives
+  hooks/           — Custom React hooks
+  types/           — TypeScript types
+  lib/             — tauri invoke wrappers
+```
