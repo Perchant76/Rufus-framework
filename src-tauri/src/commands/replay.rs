@@ -87,7 +87,7 @@ fn parse_curl_response(raw: String, duration_ms: u64) -> Result<HttpResponse, St
 fn parse_status_line(line: &str) -> (u16, String) {
     let parts: Vec<&str> = line.splitn(3, ' ').collect();
     let status: u16 = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(200);
-    let text = parts.get(2).map(str::to_string).unwrap_or_else(|| "OK".to_string());
+    let text = parts.get(2).map(|s| s.to_string()).unwrap_or_else(|| "OK".to_string());
     (status, text)
 }
 

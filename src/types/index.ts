@@ -126,14 +126,27 @@ export function parseTechStack(raw: string | string[] | null): string[] {
 }
 
 export const ALL_TOOLS = [
-  { name: "subfinder",   category: "Subdomain Enum",  install: "go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest", domain: true,  ip: false },
-  { name: "feroxbuster", category: "Dir Brute-force",  install: "cargo install feroxbuster",                                                  domain: true,  ip: false },
-  { name: "katana",      category: "Web Crawler",      install: "go install github.com/projectdiscovery/katana/cmd/katana@latest",            domain: true,  ip: false },
-  { name: "nmap",        category: "Port Scanner",     install: "apt install nmap / brew install nmap",                                       domain: true,  ip: true  },
-  { name: "nuclei",      category: "Vuln Scanner",     install: "go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest",         domain: true,  ip: true  },
-  { name: "testssl.sh",  category: "TLS Analyzer",     install: "brew install testssl / apt install testssl.sh",                              domain: true,  ip: false },
-  { name: "wapiti3",     category: "Web Vuln Scanner", install: "pip install wapiti3",                                                        domain: true,  ip: false },
-  { name: "whatweb",     category: "Tech Fingerprint", install: "apt install whatweb / gem install whatweb",                                  domain: true,  ip: true  },
+  // Recon
+  { name: "subfinder",   category: "Subdomain Enum",      install: "go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest", domain: true,  ip: false },
+  { name: "amass",       category: "Subdomain Enum (Deep)",install: "go install github.com/owasp-amass/amass/v4/...@master",                    domain: true,  ip: false },
+  { name: "dnsx",        category: "DNS Resolver",        install: "go install github.com/projectdiscovery/dnsx/cmd/dnsx@latest",               domain: true,  ip: false },
+  { name: "httpx",       category: "HTTP Prober",         install: "go install github.com/projectdiscovery/httpx/cmd/httpx@latest",             domain: true,  ip: true  },
+  { name: "gau",         category: "URL Discovery",       install: "go install github.com/lc/gau/v2/cmd/gau@latest",                           domain: true,  ip: false },
+  { name: "katana",      category: "Web Crawler",         install: "go install github.com/projectdiscovery/katana/cmd/katana@latest",           domain: true,  ip: false },
+  // Port Scanning
+  { name: "naabu",       category: "Port Scanner (Fast)", install: "go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest",          domain: true,  ip: true  },
+  { name: "nmap",        category: "Port Scanner (Deep)", install: "apt install nmap / brew install nmap",                                      domain: true,  ip: true  },
+  // Content Discovery
+  { name: "feroxbuster", category: "Dir Brute-force",     install: "cargo install feroxbuster",                                                 domain: true,  ip: false },
+  { name: "ffuf",        category: "Web Fuzzer",          install: "go install github.com/ffuf/ffuf/v2@latest",                                 domain: true,  ip: false },
+  // Vuln Scanning
+  { name: "nuclei",      category: "Vuln Scanner",        install: "go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest",        domain: true,  ip: true  },
+  { name: "nikto",       category: "Web Server Scanner",  install: "apt install nikto / brew install nikto",                                    domain: true,  ip: false },
+  { name: "sqlmap",      category: "SQL Injection",       install: "pip install sqlmap",                                                        domain: true,  ip: false },
+  { name: "wapiti3",     category: "OWASP Scanner",       install: "pip install wapiti3",                                                       domain: true,  ip: false },
+  // TLS / Tech
+  { name: "testssl.sh",  category: "TLS Analyzer",        install: "brew install testssl / apt install testssl.sh",                             domain: true,  ip: false },
+  { name: "whatweb",     category: "Tech Fingerprint",    install: "apt install whatweb / gem install whatweb",                                 domain: true,  ip: true  },
 ] as const;
 
 // ── New types ─────────────────────────────────────────────────────────────────

@@ -37,7 +37,7 @@ impl Store {
 
     // ── JSON helpers ──────────────────────────────────────────────────────────
 
-    fn write_json<T: serde::Serialize>(&self, path: &Path, data: &T) -> Result<()> {
+    fn write_json<T: serde::Serialize + ?Sized>(&self, path: &Path, data: &T) -> Result<()> {
         std::fs::write(path, serde_json::to_string_pretty(data)?)?;
         Ok(())
     }
