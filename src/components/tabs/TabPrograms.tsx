@@ -65,7 +65,7 @@ export default function TabPrograms({ onStartScan }: { onStartScan?: (config: Pa
                   {Object.entries(PLATFORM_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select></div>
               <div><label style={{ fontSize: 10, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: 1 }}>Type</label>
-                <select {...inp()} value={editing.program_type} onChange={e => setEditing(x => x && ({ ...x, program_type: e.target.value }))}>
+                <select {...inp()} value={editing.program_type} onChange={e => setEditing(x => x && ({ ...x, program_type: e.target.value as BugBountyProgram["program_type"] }))}>
                   <option value="wildcard">Wildcard (*.example.com)</option>
                   <option value="company">Company (Google, Tesla…)</option>
                   <option value="url">Single URL</option>

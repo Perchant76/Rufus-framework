@@ -141,7 +141,7 @@ export default function TabExport({ scans, findings, currentScanId }: Props) {
                 </div>
                 <div style={{ fontSize: 11, color: "var(--text-dim)" }}>
                   Generated: {new Date().toISOString().slice(0, 10)}
-                  {" · "}Duration: {scan.duration_secs ? `${scan.duration_secs}s` : "N/A"}
+                  {" · "}Duration: {scan.completed_at ? `${Math.round((new Date(scan.completed_at).getTime() - new Date(scan.created_at).getTime()) / 1000)}s` : "N/A"}
                   {" · "}Stealth: {scan.stealth_mode ? "ON" : "OFF"}
                   {" · "}Tools: {scan.tools_used?.join(", ") ?? "all"}
                 </div>

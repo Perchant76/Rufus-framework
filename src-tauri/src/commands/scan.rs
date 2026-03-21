@@ -137,8 +137,10 @@ pub async fn start_scan(app_handle: AppHandle, state: State<'_, Mutex<AppState>>
         let url = format!("https://{}", target);
         let output = runner.run("dnsx", &["-d", &target, "-json", "-silent", "-a", "-cname", "-resp", "-asn"], None).await.unwrap_or_default();
         for raw in DnsxParser.parse(&output) { save_finding!(raw); }
-        for (host, ip) in crate::parsers::dnsx::parse_resolved(&output) {
-            store.add_asset(&scan_id, "subdomain", &host, Some(&ip), None, None, vec![], None, scope.is_in_scope(&host)).ok();
+        for entry in crate::parsers::dnsx::parse_resolved_hosts(&output) {
+            let in_scope = scope.is_in_scope(&entry.host);
+            let ip = entry.a.first().map(|s| s.as_str());
+            store.add_asset(&scan_id, "subdomain", &entry.host, ip, None, None, vec![], None, in_scope).ok();
         }
         stealth_delay!();
     }
@@ -150,8 +152,10 @@ pub async fn start_scan(app_handle: AppHandle, state: State<'_, Mutex<AppState>>
             &["-u", &format!("https://{}", target), "-json", "-silent", "-title", "-tech-detect", "-status-code", "-content-length", "-tls-grab"],
             None).await.unwrap_or_default();
         for raw in HttpxParser.parse(&output) { save_finding!(raw); }
-        for (url, status, techs) in crate::parsers::httpx::parse_live_hosts(&output) {
-            store.add_asset(&scan_id, "endpoint", &url, None, Some(status as i64), None, techs, None, scope.is_in_scope(&url)).ok();
+        for entry in crate::parsers::httpx::parse_live_hosts(&output) {
+            if entry.url.is_empty() { continue; }
+            let in_scope = scope.is_in_scope(&entry.url);
+            store.add_asset(&scan_id, "endpoint", &entry.url, entry.ip.as_deref(), Some(entry.status_code as i64), Some(&entry.title), entry.tech.clone(), None, in_scope).ok();
         }
         stealth_delay!();
     }

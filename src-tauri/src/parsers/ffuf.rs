@@ -41,7 +41,6 @@ impl ToolParser for FfufParser {
 }
 
 fn classify_result(r: &FfufResult) -> Option<RawFinding> {
-    let url_lower = r.url.to_lowercase();
     let fuzz = r.input.fuzz.as_deref().unwrap_or("");
 
     let (severity, title, remediation) = if is_backup(fuzz) && r.status == 200 {
