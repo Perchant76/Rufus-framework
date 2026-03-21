@@ -1,7 +1,7 @@
 // src/components/tabs/TabCloud.tsx
 import React, { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { Card, SectionHdr, Btn } from "../ui";
+import { Card, SectionHdr, Btn , FooterBrand } from "../ui"; // FooterBrand inline
 import type { CloudAsset } from "../../types";
 
 const PROVIDER_LABELS: Record<string, string> = {
@@ -104,9 +104,7 @@ export default function TabCloud({ currentScanId }: { currentScanId: string | nu
             <div style={{ fontSize: 12 }}>Enter a target to enumerate cloud storage assets.</div>
           </div>
         )}
-        <div style={{ textAlign: "center", marginTop: 40, fontSize: 11, color: "var(--text-dim)", opacity: .5 }}>
-          Build with ❤️ by Perchant
-        </div>
+        <FooterBrand />
       </div>
     </div>
   );

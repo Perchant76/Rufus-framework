@@ -15,7 +15,7 @@ pub struct HttpxEntry {
     #[serde(rename = "cdn-name", default)] pub cdn_name: String,
     #[serde(rename = "webserver", default)] pub webserver: String,
     #[serde(default)] pub ip: Option<String>,
-    #[serde(rename = "final-url", default)] pub final_url: Option<String>,
+    #[serde(rename = "final-url", default)] pub _final_url: Option<String>,
 }
 
 pub struct HttpxParser;

@@ -1,7 +1,7 @@
 // src/components/tabs/TabPrograms.tsx
 import React, { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { Card, SectionHdr, Btn, SevBadge } from "../ui";
+import { Card, SectionHdr, Btn, SevBadge , FooterBrand } from "../ui"; // FooterBrand inline
 import type { BugBountyProgram, ScanConfig } from "../../types";
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -146,9 +146,7 @@ export default function TabPrograms({ onStartScan }: { onStartScan?: (config: Pa
             </Card>
           );
         })}
-        <div style={{ textAlign: "center", marginTop: 40, fontSize: 11, color: "var(--text-dim)", opacity: .5 }}>
-          Build with ❤️ by Perchant
-        </div>
+        <FooterBrand />
       </div>
     </div>
   );

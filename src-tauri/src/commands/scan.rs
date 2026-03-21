@@ -134,7 +134,6 @@ pub async fn start_scan(app_handle: AppHandle, state: State<'_, Mutex<AppState>>
     if is_domain && config.tools.contains(&"dnsx".to_string()) {
         check_running!();
         runner.emit_progress("dnsx", 0.0, "[dnsx] Resolving subdomains and extracting DNS records...", "info");
-        let url = format!("https://{}", target);
         let output = runner.run("dnsx", &["-d", &target, "-json", "-silent", "-a", "-cname", "-resp", "-asn"], None).await.unwrap_or_default();
         for raw in DnsxParser.parse(&output) { save_finding!(raw); }
         for entry in crate::parsers::dnsx::parse_resolved_hosts(&output) {

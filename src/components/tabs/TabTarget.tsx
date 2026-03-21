@@ -77,7 +77,7 @@ export default function TabTarget({ config, onChange, stealthOn }: Props) {
               rows={4}
             />
           </Field>
-          <p style={{ fontSize: 11, color: "var(--text-dim)", marginTop: 8 }}>
+          <p style={{ fontSize: 11, color: "var(--text)", marginTop: 8 }}>
             Assets discovered outside this scope are flagged OOS and excluded from active scanning.
           </p>
         </Card>
@@ -119,7 +119,7 @@ export default function TabTarget({ config, onChange, stealthOn }: Props) {
             </div>
           )}
           {authMode === "none" && (
-            <p style={{ fontSize: 11, color: "var(--text-dim)" }}>No credentials — scans run unauthenticated.</p>
+            <p style={{ fontSize: 11, color: "var(--text)" }}>No credentials — scans run unauthenticated.</p>
           )}
         </Card>
 
@@ -158,7 +158,7 @@ export default function TabTarget({ config, onChange, stealthOn }: Props) {
         />
         <Card>
           {loadingTools ? (
-            <p style={{ color: "var(--text-dim)", fontSize: 12, padding: "8px 0" }}>Checking tools…</p>
+            <p style={{ color: "var(--text)", fontSize: 12, padding: "8px 0" }}>Checking tools…</p>
           ) : (
             ALL_TOOLS.map(def => {
               const st = statusFor(def.name);
@@ -184,12 +184,12 @@ export default function TabTarget({ config, onChange, stealthOn }: Props) {
                   <Dot color={available ? "var(--green)" : "var(--red)"} />
 
                   <span style={{ fontSize: 12, color: "var(--text-hi)", flex: 1 }}>{def.name}</span>
-                  <span style={{ fontSize: 10, color: "var(--text-dim)", flex: 1 }}>{def.category}</span>
-                  {st?.version && <span style={{ fontSize: 10, color: "var(--text-dim)" }}>v{st.version}</span>}
+                  <span style={{ fontSize: 10, color: "var(--text)", flex: 1 }}>{def.category}</span>
+                  {st?.version && <span style={{ fontSize: 10, color: "var(--text)" }}>v{st.version}</span>}
 
                   {!available && (
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontSize: 10, color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>
+                      <span style={{ fontSize: 10, color: "var(--text)", fontFamily: "var(--font-mono)" }}>
                         {def.install}
                       </span>
                       <Btn size="sm" style={{ borderColor: "var(--yellow)", color: "var(--yellow)", background: "rgba(245,197,24,.06)" }}>

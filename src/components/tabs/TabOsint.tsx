@@ -1,7 +1,7 @@
 // src/components/tabs/TabOsint.tsx
 import React, { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { Card, SectionHdr, Btn } from "../ui";
+import { Card, SectionHdr, Btn , FooterBrand } from "../ui"; // FooterBrand inline
 import type { OsintResult } from "../../types";
 
 export default function TabOsint() {
@@ -110,9 +110,7 @@ export default function TabOsint() {
             <div style={{ fontSize: 12 }}>Enter a target domain to generate Google dorks and GitHub search queries.</div>
           </div>
         )}
-        <div style={{ textAlign: "center", marginTop: 40, fontSize: 11, color: "var(--text-dim)", opacity: .5 }}>
-          Build with ❤️ by Perchant
-        </div>
+        <FooterBrand />
       </div>
     </div>
   );

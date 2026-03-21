@@ -17,7 +17,6 @@ struct AmassResult {
 #[derive(Debug, Deserialize, Default)]
 struct AmassAddr {
     #[serde(default)] ip: String,
-    #[serde(rename = "cidr", default)] cidr: Option<String>,
     #[serde(rename = "asn", default)] asn: Option<i64>,
     #[serde(rename = "desc", default)] desc: Option<String>,
 }

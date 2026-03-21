@@ -1,6 +1,4 @@
-// src-tauri/src/main.rs
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
 fn main() {
-    probescan_lib::run();
+    rufus_lib::run();
 }

@@ -1,5 +1,5 @@
 {
-  "name": "probescan",
+  "name": "rufus-framework",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -23,5 +23,6 @@
     "@vitejs/plugin-react": "^4.3.1",
     "typescript": "^5.5.3",
     "vite": "^5.4.2"
-  }
+  },
+  "description": "Rufus Framework \u2014 Elite Penetration Testing Platform"
 }

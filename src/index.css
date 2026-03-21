@@ -1,44 +1,44 @@
-/* src/index.css — ProbeScan Blood Red Theme */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap');
+/* Rufus Framework — Elite Dark Theme */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Backgrounds — deep near-black with red tint */
-  --bg0: #080608;
-  --bg1: #0e080a;
-  --bg2: #130a0d;
-  --bg3: #1a0d11;
-  --bg4: #231318;
+  --bg0:        #080a0f;
+  --bg1:        #0c0f17;
+  --bg2:        #111827;
+  --bg3:        #1a2235;
+  --bg4:        #212d42;
+  --border:     #1e2d45;
+  --border-hi:  #2d4060;
+  --border-glow:#e8001a44;
 
-  /* Borders */
-  --border: #2d1218;
-  --border-hi: #4a1e28;
+  /* Text — high contrast whites */
+  --text:       #e8edf5;
+  --text-dim:   #8899b4;
+  --text-hi:    #ffffff;
+  --text-muted: #6070888;
 
-  /* Text */
-  --text: #d4b8bc;
-  --text-dim: #7a4a52;
-  --text-hi: #f0dde0;
+  /* Accent — blood red */
+  --accent:     #e8001a;
+  --accent-dim: rgba(232,0,26,0.12);
+  --accent-glow:rgba(232,0,26,0.30);
+  --accent2:    #ff3355;
 
-  /* PRIMARY accent — blood red */
-  --accent: #e8001a;
-  --accent-dim: rgba(232, 0, 26, 0.1);
-  --accent-glow: rgba(232, 0, 26, 0.25);
+  /* Severity */
+  --red:    #ff1a3d;
+  --orange: #ff6b2b;
+  --yellow: #ffcc00;
+  --green:  #00ff88;
+  --blue:   #3b82f6;
+  --purple: #8b5cf6;
 
-  /* Severity palette */
-  --red:    #ff0033;
-  --orange: #ff5722;
-  --yellow: #ffab00;
-  --green:  #00e676;
-  --purple: #c62828;
-
-  /* Fonts */
   --font-mono: 'JetBrains Mono', monospace;
-  --font-ui:   'Syne', sans-serif;
-
-  /* Radii */
+  --font-ui:   'Orbitron', monospace;
+  --font-body: 'Inter', sans-serif;
   --r:    6px;
-  --r-lg: 10px;
+  --r-lg: 12px;
+  --r-xl: 16px;
 }
 
 html, body, #root {
@@ -50,30 +50,49 @@ html, body, #root {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Subtle red scanline texture on the whole app */
+/* Grid texture overlay */
 #root::before {
   content: '';
-  position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(232,0,26,0.015) 2px,
-    rgba(232,0,26,0.015) 4px
-  );
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(232,0,26,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,0,26,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Vignette */
+#root::after {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(8,10,15,0.8) 100%);
 }
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-track { background: var(--bg1); }
 ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); opacity: .5; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::selection { background: rgba(232,0,26,0.3); color: #fff; }
 
-::selection { background: rgba(232,0,26,0.25); }
+/* Animations */
+@keyframes blink         { 0%,100%{opacity:1} 50%{opacity:.2} }
+@keyframes pulse-red     { 0%,100%{box-shadow:0 0 0 0 rgba(232,0,26,.5)} 50%{box-shadow:0 0 0 8px rgba(232,0,26,0)} }
+@keyframes glow-pulse    { 0%,100%{filter:drop-shadow(0 0 6px rgba(232,0,26,.8))} 50%{filter:drop-shadow(0 0 20px rgba(232,0,26,1))} }
+@keyframes scan-line     { 0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)} }
+@keyframes slide-in      { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fade-in       { from{opacity:0} to{opacity:1} }
+@keyframes rotate-slow   { to{transform:rotate(360deg)} }
+@keyframes hex-pulse     { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.7;transform:scale(0.97)} }
+@keyframes data-stream   { 0%{background-position:0 0} 100%{background-position:0 200px} }
 
-@keyframes blink       { 0%,100% { opacity:1 } 50% { opacity:.3 } }
-@keyframes pulse-red   { 0%,100% { box-shadow: 0 0 0 0 rgba(232,0,26,.5) } 50% { box-shadow: 0 0 0 6px rgba(232,0,26,0) } }
-@keyframes slide-in    { from { opacity:0; transform:translateY(4px) } to { opacity:1; transform:translateY(0) } }
-@keyframes fade-in     { from { opacity:0 } to { opacity:1 } }
-@keyframes glow-pulse  { 0%,100% { text-shadow: 0 0 8px rgba(232,0,26,.6) } 50% { text-shadow: 0 0 20px rgba(232,0,26,.9) } }
+.animate-in { animation: slide-in 0.25s ease; }
 
-.animate-in { animation: slide-in 0.2s ease; }
+/* Scan line effect */
+.scan-effect::before {
+  content: '';
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: scan-line 3s linear infinite;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 10;
+}

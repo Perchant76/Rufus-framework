@@ -1,7 +1,7 @@
 // src/components/tabs/TabWorkflow.tsx
 import React, { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { Card, SectionHdr, Btn } from "../ui";
+import { Card, SectionHdr, Btn , FooterBrand } from "../ui"; // FooterBrand inline
 import type { WorkflowRun } from "../../types";
 
 const STATUS_COLOR: Record<string, string> = {
@@ -166,9 +166,7 @@ export default function TabWorkflow() {
             })()}
           </>
         )}
-        <div style={{ textAlign: "center", marginTop: 40, fontSize: 11, color: "var(--text-dim)", opacity: .5 }}>
-          Build with ❤️ by Perchant
-        </div>
+        <FooterBrand />
       </div>
     </div>
   );

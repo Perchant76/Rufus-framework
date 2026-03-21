@@ -8,7 +8,6 @@ use super::ToolParser;
 #[derive(Debug, Deserialize)]
 struct GauEntry {
     url: String,
-    #[serde(default)] statuscode: Option<u16>,
 }
 
 pub struct GauParser;
