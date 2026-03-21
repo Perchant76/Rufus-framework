@@ -12,7 +12,10 @@ enum ScopeItem {
     ExactIp(IpAddr),
 }
 
-struct IpRange { base: u32, mask: u32 }
+struct IpRange {
+    base: u32,
+    mask: u32,
+}
 
 impl ScopeEngine {
     pub fn new(scope: &[String]) -> Self {
@@ -54,21 +57,29 @@ impl ScopeEngine {
     }
 
     fn extract_host(input: &str) -> &str {
-        let s = if let Some(pos) = input.find("://") { &input[pos + 3..] } else { input };
-        let s = s.split('/').next().unwrap_or(s);
-        if let Some(p) = s.rfind(':') {
-            if !s.contains('[') { return &s[..p]; }
+        let without_scheme = if let Some(pos) = input.find("://") {
+            &input[pos + 3..]
+        } else {
+            input
+        };
+        let host = without_scheme.split('/').next().unwrap_or(without_scheme);
+        if let Some(colon_pos) = host.rfind(':') {
+            if !host.contains('[') {
+                return &host[..colon_pos];
+            }
         }
-        s
+        host
     }
 
     fn check_domain(&self, host: &str) -> bool {
         for item in &self.scope_items {
             match item {
-                ScopeItem::ExactDomain(d) =>
-                    if host == d || host.ends_with(&format!(".{}", d)) { return true; },
-                ScopeItem::WildcardDomain(d) =>
-                    if host.ends_with(&format!(".{}", d)) || host == d { return true; },
+                ScopeItem::ExactDomain(d) => {
+                    if host == d || host.ends_with(&format!(".{}", d)) { return true; }
+                }
+                ScopeItem::WildcardDomain(d) => {
+                    if host.ends_with(&format!(".{}", d)) || host == d { return true; }
+                }
                 _ => {}
             }
         }
@@ -78,10 +89,13 @@ impl ScopeEngine {
     fn check_ip(&self, ip: &IpAddr) -> bool {
         for item in &self.scope_items {
             match item {
-                ScopeItem::ExactIp(scope_ip) => if ip == scope_ip { return true; },
-                ScopeItem::CidrRange(r) => {
+                ScopeItem::ExactIp(scope_ip) => {
+                    if ip == scope_ip { return true; }
+                }
+                ScopeItem::CidrRange(range) => {
                     if let IpAddr::V4(v4) = ip {
-                        if u32::from(*v4) & r.mask == r.base { return true; }
+                        let addr = u32::from(*v4);
+                        if addr & range.mask == range.base { return true; }
                     }
                 }
                 _ => {}

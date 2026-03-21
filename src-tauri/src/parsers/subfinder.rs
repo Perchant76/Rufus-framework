@@ -1,9 +1,4 @@
 // src-tauri/src/parsers/subfinder.rs
-//
-// subfinder is invoked with: subfinder -d target.com -oJ -all -recursive
-// Each line of output is a JSON object:
-// {"host":"sub.example.com","input":"example.com","source":["crtsh"]}
-
 use serde::Deserialize;
 use crate::db::models::RawFinding;
 use super::ToolParser;
@@ -21,46 +16,35 @@ pub struct SubfinderParser;
 
 impl ToolParser for SubfinderParser {
     fn parse(&self, output: &str) -> Vec<RawFinding> {
-        // subfinder output is JSONL (one JSON object per line)
-        // We return INFO findings for each discovered subdomain
-        output
-            .lines()
+        output.lines()
             .filter(|l| !l.is_empty())
-            .filter_map(|line| {
-                serde_json::from_str::<SubfinderEntry>(line).ok()
-            })
-            .map(|entry| {
-                let sources = entry.source.join(", ");
-                RawFinding {
-                    source_tool: "subfinder".to_string(),
-                    severity: "INFO".to_string(),
-                    title: format!("Subdomain Discovered: {}", entry.host),
-                    description: format!("Subdomain {} was discovered via: {}", entry.host, sources),
-                    affected_url: format!("https://{}", entry.host),
-                    affected_port: None,
-                    cve_references: vec![],
-                    cvss_score: None,
-                    evidence: format!("Host: {}\nSources: {}\nIP: {}", entry.host, sources, entry.ip.unwrap_or_default()),
-                    remediation: String::new(),
-                    http_request: None,
-                    http_response: None,
-                }
+            .filter_map(|l| serde_json::from_str::<SubfinderEntry>(l).ok())
+            .map(|e| RawFinding {
+                source_tool: "subfinder".to_string(),
+                severity: "INFO".to_string(),
+                title: format!("Subdomain: {}", e.host),
+                description: format!("Discovered via: {}", e.source.join(", ")),
+                affected_url: format!("https://{}", e.host),
+                affected_port: None,
+                cve_references: vec![],
+                cvss_score: None,
+                evidence: format!("Host: {}\nIP: {}", e.host, e.ip.as_deref().unwrap_or("")),
+                remediation: String::new(),
+                http_request: None,
+                http_response: None,
             })
             .collect()
     }
 }
 
-/// Parse subdomain lines into (hostname, ip) pairs for the assets table
 pub fn parse_assets(output: &str) -> Vec<(String, Option<String>)> {
-    output
-        .lines()
+    output.lines()
         .filter(|l| !l.is_empty())
-        .filter_map(|line| {
-            if let Ok(entry) = serde_json::from_str::<SubfinderEntry>(line) {
-                Some((entry.host, entry.ip))
-            } else if !line.contains('{') {
-                // Plain text fallback: just the hostname
-                Some((line.trim().to_string(), None))
+        .filter_map(|l| {
+            if let Ok(e) = serde_json::from_str::<SubfinderEntry>(l) {
+                Some((e.host, e.ip))
+            } else if !l.contains('{') {
+                Some((l.trim().to_string(), None))
             } else {
                 None
             }

@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Card, SectionHdr, Btn, SevBadge } from "../ui";
 import type { Scan, VulnFinding, Severity } from "../../types";
-import { parseCVEs } from "../../types";
 import { exportPdf, exportCsv, exportBurp, exportCaido } from "../../lib/api";
 import { save } from "@tauri-apps/plugin-dialog";
 
@@ -144,7 +143,7 @@ export default function TabExport({ scans, findings, currentScanId }: Props) {
                   Generated: {new Date().toISOString().slice(0, 10)}
                   {" · "}Duration: {scan.duration_secs ? `${scan.duration_secs}s` : "N/A"}
                   {" · "}Stealth: {scan.stealth_mode ? "ON" : "OFF"}
-                  {" · "}Tools: {scan.tools_used ? JSON.parse(scan.tools_used).join(", ") : "all"}
+                  {" · "}Tools: {scan.tools_used?.join(", ") ?? "all"}
                 </div>
               </div>
 

@@ -145,7 +145,7 @@ export default function TabVulns({ findings, scanId, onDelete }: Props) {
         )}
 
         {filtered.map(f => {
-          const cves = parseCVEs(f.cve_references);
+          const cves = Array.isArray(f.cve_references) ? f.cve_references : parseCVEs(f.cve_references as unknown as string);
           const isExp = expanded === f.id;
           return (
             <React.Fragment key={f.id}>

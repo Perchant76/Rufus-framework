@@ -14,7 +14,7 @@ export interface VulnFinding {
   description: string;
   affected_url: string;
   affected_port: number | null;
-  cve_references: string; // JSON string from DB — parse before use
+  cve_references: string[];   // native array — no JSON parsing needed
   cvss_score: number | null;
   evidence: string;
   remediation: string;
@@ -28,16 +28,13 @@ export interface Scan {
   id: string;
   target: string;
   target_type: TargetType;
-  scope: string; // JSON string
+  scope: string[];            // native array
   status: ScanStatus;
   stealth_mode: boolean;
-  auth_config: string | null;
-  rate_config: string | null;
-  tools_used: string | null;
+  tools_used: string[];       // native array
   created_at: string;
   completed_at: string | null;
-  duration_secs: number | null;
-  finding_count: number | null;
+  finding_count: number;
 }
 
 export interface DiscoveredAsset {
@@ -48,8 +45,7 @@ export interface DiscoveredAsset {
   ip: string | null;
   http_status: number | null;
   page_title: string | null;
-  tech_stack: string | null; // JSON string
-  redirect_chain: string | null;
+  tech_stack: string[];       // native array
   parent: string | null;
   in_scope: boolean;
   discovered_at: string;
@@ -79,12 +75,6 @@ export interface AuthConfig {
   cookie_string?: string;
   bearer_token?: string;
   custom_headers?: [string, string][];
-}
-
-export interface RateConfig {
-  concurrency: number;
-  delay_min_ms: number;
-  delay_max_ms: number;
 }
 
 export interface ScanConfig {
@@ -117,28 +107,29 @@ export interface ScanComparison {
   persistent_findings: PersistentFinding[];
 }
 
-// Helper to parse cve_references from DB string to array
-export function parseCVEs(raw: string): string[] {
-  try { return JSON.parse(raw) ?? []; } catch { return []; }
-}
-
-// Helper to parse tech_stack
-export function parseTechStack(raw: string | null): string[] {
-  if (!raw) return [];
-  try { return JSON.parse(raw) ?? []; } catch { return []; }
-}
-
 export const SEV_ORDER: Record<Severity, number> = {
   CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3, INFO: 4,
 };
 
+// No longer needed — cve_references is now a native array from Rust
+export function parseCVEs(raw: string | string[]): string[] {
+  if (Array.isArray(raw)) return raw;
+  try { return JSON.parse(raw) ?? []; } catch { return []; }
+}
+
+export function parseTechStack(raw: string | string[] | null): string[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  try { return JSON.parse(raw) ?? []; } catch { return []; }
+}
+
 export const ALL_TOOLS = [
-  { name: "subfinder",   category: "Subdomain Enum",   install: "go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest", domain: true,  ip: false },
-  { name: "feroxbuster", category: "Dir Brute-force",   install: "cargo install feroxbuster", domain: true,  ip: false },
-  { name: "katana",      category: "Web Crawler",       install: "go install github.com/projectdiscovery/katana/cmd/katana@latest", domain: true,  ip: false },
-  { name: "nmap",        category: "Port Scanner",      install: "apt install nmap", domain: true,  ip: true  },
-  { name: "nuclei",      category: "Vuln Scanner",      install: "go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest", domain: true,  ip: true  },
-  { name: "testssl.sh",  category: "TLS Analyzer",      install: "brew install testssl", domain: true,  ip: false },
-  { name: "wapiti3",     category: "Web Vuln Scanner",  install: "pip install wapiti3", domain: true,  ip: false },
-  { name: "whatweb",     category: "Tech Fingerprint",  install: "apt install whatweb", domain: true,  ip: true  },
+  { name: "subfinder",   category: "Subdomain Enum",  install: "go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest", domain: true,  ip: false },
+  { name: "feroxbuster", category: "Dir Brute-force",  install: "cargo install feroxbuster",                                                  domain: true,  ip: false },
+  { name: "katana",      category: "Web Crawler",      install: "go install github.com/projectdiscovery/katana/cmd/katana@latest",            domain: true,  ip: false },
+  { name: "nmap",        category: "Port Scanner",     install: "apt install nmap / brew install nmap",                                       domain: true,  ip: true  },
+  { name: "nuclei",      category: "Vuln Scanner",     install: "go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest",         domain: true,  ip: true  },
+  { name: "testssl.sh",  category: "TLS Analyzer",     install: "brew install testssl / apt install testssl.sh",                              domain: true,  ip: false },
+  { name: "wapiti3",     category: "Web Vuln Scanner", install: "pip install wapiti3",                                                        domain: true,  ip: false },
+  { name: "whatweb",     category: "Tech Fingerprint", install: "apt install whatweb / gem install whatweb",                                  domain: true,  ip: true  },
 ] as const;

@@ -10,7 +10,7 @@ pub mod scanner;
 pub use db::models::*;
 
 pub struct AppState {
-    pub store: db::Store,
+    pub db: sqlx::SqlitePool,
     pub active_scan_id: Option<String>,
     pub scan_running: bool,
 }
@@ -23,20 +23,25 @@ pub fn run() {
         .setup(|app| {
             tracing_subscriber::fmt::init();
 
-            // Data directory: %APPDATA%\probescan\scans  (Windows)
-            //                  ~/Library/Application Support/probescan/scans  (macOS)
-            //                  ~/.local/share/probescan/scans  (Linux)
-            let data_dir = app.handle()
+            let app_handle = app.handle().clone();
+            let db_path = app_handle
                 .path()
                 .app_data_dir()
-                .expect("Failed to resolve app data dir")
-                .join("scans");
+                .expect("Failed to get app data dir")
+                .join("probescan.db");
 
-            let store = db::Store::new(data_dir)
-                .expect("Failed to create data directory");
+            let db_url = format!("sqlite://{}?mode=rwc", db_path.display());
+
+            let pool = tauri::async_runtime::block_on(async {
+                db::init_pool(&db_url).await.expect("Failed to init DB")
+            });
+
+            tauri::async_runtime::block_on(async {
+                db::migrations::run(&pool).await.expect("Failed to run migrations");
+            });
 
             app.manage(Mutex::new(AppState {
-                store,
+                db: pool,
                 active_scan_id: None,
                 scan_running: false,
             }));

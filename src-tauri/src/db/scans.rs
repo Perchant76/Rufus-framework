@@ -9,7 +9,9 @@ pub async fn create(pool: &SqlitePool, config: &ScanConfig) -> Result<Scan> {
     let id = Uuid::new_v4().to_string();
     let now = Utc::now().to_rfc3339();
     let scope_json = serde_json::to_string(&config.scope)?;
-    let auth_json = config.auth.as_ref().map(|a| serde_json::to_string(a)).transpose()?;
+    let auth_json = config.auth.as_ref()
+        .map(|a| serde_json::to_string(a))
+        .transpose()?;
     let rate_json = serde_json::to_string(&serde_json::json!({
         "concurrency": config.concurrency,
         "delay_min_ms": config.delay_min_ms,
@@ -18,9 +20,9 @@ pub async fn create(pool: &SqlitePool, config: &ScanConfig) -> Result<Scan> {
     let tools_json = serde_json::to_string(&config.tools)?;
 
     sqlx::query(
-        r#"INSERT INTO scans
-           (id, target, target_type, scope, status, stealth_mode, auth_config, rate_config, tools_used, created_at)
-           VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?)"#,
+        "INSERT INTO scans
+         (id, target, target_type, scope, status, stealth_mode, auth_config, rate_config, tools_used, created_at)
+         VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?)"
     )
     .bind(&id)
     .bind(&config.target)
@@ -39,11 +41,8 @@ pub async fn create(pool: &SqlitePool, config: &ScanConfig) -> Result<Scan> {
 
 pub async fn get(pool: &SqlitePool, id: &str) -> Result<Option<Scan>> {
     let scan = sqlx::query_as::<_, Scan>(
-        r#"SELECT s.*, COUNT(f.id) as finding_count
-           FROM scans s
-           LEFT JOIN vuln_findings f ON f.scan_id = s.id
-           WHERE s.id = ?
-           GROUP BY s.id"#,
+        "SELECT s.*, (SELECT COUNT(*) FROM vuln_findings f WHERE f.scan_id = s.id) as finding_count
+         FROM scans s WHERE s.id = ?"
     )
     .bind(id)
     .fetch_optional(pool)
@@ -53,11 +52,8 @@ pub async fn get(pool: &SqlitePool, id: &str) -> Result<Option<Scan>> {
 
 pub async fn list(pool: &SqlitePool) -> Result<Vec<Scan>> {
     let scans = sqlx::query_as::<_, Scan>(
-        r#"SELECT s.*, COUNT(f.id) as finding_count
-           FROM scans s
-           LEFT JOIN vuln_findings f ON f.scan_id = s.id
-           GROUP BY s.id
-           ORDER BY s.created_at DESC"#,
+        "SELECT s.*, (SELECT COUNT(*) FROM vuln_findings f WHERE f.scan_id = s.id) as finding_count
+         FROM scans s ORDER BY s.created_at DESC"
     )
     .fetch_all(pool)
     .await?;

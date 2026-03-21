@@ -1,17 +1,12 @@
 // src-tauri/src/db/mod.rs
+// Flat-file JSON storage — no database engine required.
+// Data is stored in the app data directory:
+//   scans/
+//     <scan_id>.json          — Scan metadata
+//     <scan_id>.findings.json — Vec<VulnFinding>
+//     <scan_id>.assets.json   — Vec<DiscoveredAsset>
+
 pub mod models;
-pub mod migrations;
-pub mod scans;
-pub mod findings;
-pub mod assets;
+pub mod store;
 
-use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
-use anyhow::Result;
-
-pub async fn init_pool(url: &str) -> Result<SqlitePool> {
-    let pool = SqlitePoolOptions::new()
-        .max_connections(5)
-        .connect(url)
-        .await?;
-    Ok(pool)
-}
+pub use store::Store;

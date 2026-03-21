@@ -2,12 +2,12 @@
 use std::sync::Mutex;
 use tauri::State;
 use crate::AppState;
-use crate::db::{self, models::VulnFinding};
+use crate::db::models::VulnFinding;
 
 #[tauri::command]
 pub async fn get_findings(state: State<'_, Mutex<AppState>>) -> Result<Vec<VulnFinding>, String> {
-    let pool = { state.lock().unwrap().db.clone() };
-    db::findings::list_all(&pool).await.map_err(|e| e.to_string())
+    let store = { state.lock().unwrap().store.clone_ref() };
+    store.list_all_findings().map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -15,8 +15,9 @@ pub async fn get_finding(
     state: State<'_, Mutex<AppState>>,
     finding_id: String,
 ) -> Result<Option<VulnFinding>, String> {
-    let pool = { state.lock().unwrap().db.clone() };
-    db::findings::get(&pool, &finding_id).await.map_err(|e| e.to_string())
+    let store = { state.lock().unwrap().store.clone_ref() };
+    let all = store.list_all_findings().map_err(|e| e.to_string())?;
+    Ok(all.into_iter().find(|f| f.id == finding_id))
 }
 
 #[tauri::command]
@@ -24,8 +25,8 @@ pub async fn get_findings_for_scan(
     state: State<'_, Mutex<AppState>>,
     scan_id: String,
 ) -> Result<Vec<VulnFinding>, String> {
-    let pool = { state.lock().unwrap().db.clone() };
-    db::findings::list_for_scan(&pool, &scan_id).await.map_err(|e| e.to_string())
+    let store = { state.lock().unwrap().store.clone_ref() };
+    store.list_findings(&scan_id).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -33,6 +34,6 @@ pub async fn delete_finding(
     state: State<'_, Mutex<AppState>>,
     finding_id: String,
 ) -> Result<(), String> {
-    let pool = { state.lock().unwrap().db.clone() };
-    db::findings::delete(&pool, &finding_id).await.map_err(|e| e.to_string())
+    let store = { state.lock().unwrap().store.clone_ref() };
+    store.delete_finding(&finding_id).map_err(|e| e.to_string())
 }

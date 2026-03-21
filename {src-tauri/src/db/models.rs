@@ -1,21 +1,24 @@
 // src-tauri/src/db/models.rs
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct Scan {
     pub id: String,
     pub target: String,
     pub target_type: String,
-    pub scope: Vec<String>,
+    pub scope: String,
     pub status: String,
     pub stealth_mode: bool,
-    pub tools_used: Vec<String>,
+    pub auth_config: Option<String>,
+    pub rate_config: Option<String>,
+    pub tools_used: Option<String>,
     pub created_at: String,
     pub completed_at: Option<String>,
-    pub finding_count: usize,
+    pub duration_secs: Option<i64>,
+    pub finding_count: Option<i64>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct VulnFinding {
     pub id: String,
     pub scan_id: String,
@@ -25,7 +28,7 @@ pub struct VulnFinding {
     pub description: String,
     pub affected_url: String,
     pub affected_port: Option<i64>,
-    pub cve_references: Vec<String>,
+    pub cve_references: String,
     pub cvss_score: Option<f64>,
     pub evidence: String,
     pub remediation: String,
@@ -35,7 +38,7 @@ pub struct VulnFinding {
     pub http_response: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct DiscoveredAsset {
     pub id: String,
     pub scan_id: String,
@@ -44,7 +47,8 @@ pub struct DiscoveredAsset {
     pub ip: Option<String>,
     pub http_status: Option<i64>,
     pub page_title: Option<String>,
-    pub tech_stack: Vec<String>,
+    pub tech_stack: Option<String>,
+    pub redirect_chain: Option<String>,
     pub parent: Option<String>,
     pub in_scope: bool,
     pub discovered_at: String,

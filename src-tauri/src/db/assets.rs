@@ -5,6 +5,7 @@ use chrono::Utc;
 use uuid::Uuid;
 use crate::db::models::DiscoveredAsset;
 
+#[allow(clippy::too_many_arguments)]
 pub async fn insert(
     pool: &SqlitePool,
     scan_id: &str,
@@ -20,14 +21,14 @@ pub async fn insert(
 ) -> Result<DiscoveredAsset> {
     let id = Uuid::new_v4().to_string();
     let now = Utc::now().to_rfc3339();
-    let tech_json = tech_stack.map(|t| serde_json::to_string(&t)).transpose()?;
-    let redir_json = redirect_chain.map(|r| serde_json::to_string(&r)).transpose()?;
+    let tech_json = tech_stack.as_ref().map(|t| serde_json::to_string(t)).transpose()?;
+    let redir_json = redirect_chain.as_ref().map(|r| serde_json::to_string(r)).transpose()?;
 
     sqlx::query(
-        r#"INSERT INTO discovered_assets
-           (id, scan_id, asset_type, value, ip, http_status, page_title, tech_stack,
-            redirect_chain, parent, in_scope, discovered_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"#,
+        "INSERT INTO discovered_assets
+         (id, scan_id, asset_type, value, ip, http_status, page_title,
+          tech_stack, redirect_chain, parent, in_scope, discovered_at)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"
     )
     .bind(&id).bind(scan_id).bind(asset_type).bind(value)
     .bind(ip).bind(http_status).bind(page_title)
@@ -46,11 +47,10 @@ pub async fn insert(
 }
 
 pub async fn list_for_scan(pool: &SqlitePool, scan_id: &str) -> Result<Vec<DiscoveredAsset>> {
-    let assets = sqlx::query_as::<_, DiscoveredAsset>(
+    Ok(sqlx::query_as::<_, DiscoveredAsset>(
         "SELECT * FROM discovered_assets WHERE scan_id = ? ORDER BY value"
     )
     .bind(scan_id)
     .fetch_all(pool)
-    .await?;
-    Ok(assets)
+    .await?)
 }

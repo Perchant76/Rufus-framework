@@ -1,7 +1,7 @@
 // src/components/tabs/TabTarget.tsx
 import React, { useState, useEffect } from "react";
 import { Card, SectionHdr, Field, Input, Textarea, Select, Btn, Dot, ProgBar, FilterChip } from "../ui";
-import type { AuthConfig, ScanConfig, TargetType } from "../../types";
+import type { AuthConfig, ScanConfig } from "../../types";
 import { ALL_TOOLS } from "../../types";
 import { checkAllTools } from "../../lib/api";
 import type { ToolStatus } from "../../types";

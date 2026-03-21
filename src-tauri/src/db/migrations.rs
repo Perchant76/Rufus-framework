@@ -4,8 +4,7 @@ use anyhow::Result;
 
 pub async fn run(pool: &SqlitePool) -> Result<()> {
     sqlx::query(
-        r#"
-        CREATE TABLE IF NOT EXISTS scans (
+        "CREATE TABLE IF NOT EXISTS scans (
             id              TEXT PRIMARY KEY,
             target          TEXT NOT NULL,
             target_type     TEXT NOT NULL,
@@ -19,9 +18,11 @@ pub async fn run(pool: &SqlitePool) -> Result<()> {
             completed_at    TEXT,
             duration_secs   INTEGER,
             finding_count   INTEGER DEFAULT 0
-        );
+        )"
+    ).execute(pool).await?;
 
-        CREATE TABLE IF NOT EXISTS vuln_findings (
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS vuln_findings (
             id              TEXT PRIMARY KEY,
             scan_id         TEXT NOT NULL,
             source_tool     TEXT NOT NULL,
@@ -39,9 +40,11 @@ pub async fn run(pool: &SqlitePool) -> Result<()> {
             http_request    TEXT,
             http_response   TEXT,
             FOREIGN KEY (scan_id) REFERENCES scans(id) ON DELETE CASCADE
-        );
+        )"
+    ).execute(pool).await?;
 
-        CREATE TABLE IF NOT EXISTS discovered_assets (
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS discovered_assets (
             id              TEXT PRIMARY KEY,
             scan_id         TEXT NOT NULL,
             asset_type      TEXT NOT NULL,
@@ -55,15 +58,12 @@ pub async fn run(pool: &SqlitePool) -> Result<()> {
             in_scope        INTEGER NOT NULL DEFAULT 1,
             discovered_at   TEXT NOT NULL,
             FOREIGN KEY (scan_id) REFERENCES scans(id) ON DELETE CASCADE
-        );
+        )"
+    ).execute(pool).await?;
 
-        CREATE INDEX IF NOT EXISTS idx_findings_scan ON vuln_findings(scan_id);
-        CREATE INDEX IF NOT EXISTS idx_findings_severity ON vuln_findings(severity);
-        CREATE INDEX IF NOT EXISTS idx_assets_scan ON discovered_assets(scan_id);
-        "#,
-    )
-    .execute(pool)
-    .await?;
+    sqlx::query("CREATE INDEX IF NOT EXISTS idx_findings_scan ON vuln_findings(scan_id)").execute(pool).await?;
+    sqlx::query("CREATE INDEX IF NOT EXISTS idx_findings_severity ON vuln_findings(severity)").execute(pool).await?;
+    sqlx::query("CREATE INDEX IF NOT EXISTS idx_assets_scan ON discovered_assets(scan_id)").execute(pool).await?;
 
     Ok(())
 }
