@@ -1,37 +1,48 @@
-/* src/index.css */
+/* src/index.css — ProbeScan Blood Red Theme */
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg0: #080b0f;
-  --bg1: #0d1117;
-  --bg2: #111820;
-  --bg3: #161f2b;
-  --bg4: #1c2839;
-  --border: #1e2d3d;
-  --border-hi: #2a3f56;
-  --text: #c9d6e3;
-  --text-dim: #5d7a96;
-  --text-hi: #e8f0f8;
-  --accent: #00d4ff;
-  --accent-dim: rgba(0,212,255,.1);
-  --red: #ff3b5c;
-  --orange: #ff7b2c;
-  --yellow: #f5c518;
-  --green: #22c55e;
-  --purple: #a855f7;
+  /* Backgrounds — deep near-black with red tint */
+  --bg0: #080608;
+  --bg1: #0e080a;
+  --bg2: #130a0d;
+  --bg3: #1a0d11;
+  --bg4: #231318;
+
+  /* Borders */
+  --border: #2d1218;
+  --border-hi: #4a1e28;
+
+  /* Text */
+  --text: #d4b8bc;
+  --text-dim: #7a4a52;
+  --text-hi: #f0dde0;
+
+  /* PRIMARY accent — blood red */
+  --accent: #e8001a;
+  --accent-dim: rgba(232, 0, 26, 0.1);
+  --accent-glow: rgba(232, 0, 26, 0.25);
+
+  /* Severity palette */
+  --red:    #ff0033;
+  --orange: #ff5722;
+  --yellow: #ffab00;
+  --green:  #00e676;
+  --purple: #c62828;
+
+  /* Fonts */
   --font-mono: 'JetBrains Mono', monospace;
-  --font-ui: 'Syne', sans-serif;
-  --r: 6px;
+  --font-ui:   'Syne', sans-serif;
+
+  /* Radii */
+  --r:    6px;
   --r-lg: 10px;
-  --transition: 150ms ease;
 }
 
 html, body, #root {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
+  height: 100%; width: 100%; overflow: hidden;
   background: var(--bg0);
   color: var(--text);
   font-family: var(--font-mono);
@@ -39,27 +50,30 @@ html, body, #root {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar */
+/* Subtle red scanline texture on the whole app */
+#root::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(232,0,26,0.015) 2px,
+    rgba(232,0,26,0.015) 4px
+  );
+}
+
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-hi); }
+::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); opacity: .5; }
 
-/* Selection */
-::selection { background: rgba(0, 212, 255, 0.2); }
+::selection { background: rgba(232,0,26,0.25); }
 
-/* Animations */
-@keyframes blink { 0%,100% { opacity:1 } 50% { opacity:.3 } }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 currentColor; opacity:1 } 50% { box-shadow: 0 0 0 4px transparent; opacity:.7 } }
-@keyframes slide-in { from { opacity:0; transform:translateY(4px) } to { opacity:1; transform:translateY(0) } }
-@keyframes fade-in { from { opacity:0 } to { opacity:1 } }
+@keyframes blink       { 0%,100% { opacity:1 } 50% { opacity:.3 } }
+@keyframes pulse-red   { 0%,100% { box-shadow: 0 0 0 0 rgba(232,0,26,.5) } 50% { box-shadow: 0 0 0 6px rgba(232,0,26,0) } }
+@keyframes slide-in    { from { opacity:0; transform:translateY(4px) } to { opacity:1; transform:translateY(0) } }
+@keyframes fade-in     { from { opacity:0 } to { opacity:1 } }
+@keyframes glow-pulse  { 0%,100% { text-shadow: 0 0 8px rgba(232,0,26,.6) } 50% { text-shadow: 0 0 20px rgba(232,0,26,.9) } }
 
 .animate-in { animation: slide-in 0.2s ease; }
-
-/* Severity colors */
-.sev-critical { color: var(--red); }
-.sev-high { color: var(--orange); }
-.sev-medium { color: var(--yellow); }
-.sev-low { color: var(--green); }
-.sev-info { color: var(--accent); }

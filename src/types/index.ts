@@ -88,6 +88,8 @@ export interface ScanConfig {
   tools: string[];
   auth: AuthConfig | null;
   respect_robots: boolean;
+  wordlist_id?: string | null;
+  nuclei_profile_id?: string | null;
 }
 
 export interface PersistentFinding {
@@ -133,3 +135,97 @@ export const ALL_TOOLS = [
   { name: "wapiti3",     category: "Web Vuln Scanner", install: "pip install wapiti3",                                                        domain: true,  ip: false },
   { name: "whatweb",     category: "Tech Fingerprint", install: "apt install whatweb / gem install whatweb",                                  domain: true,  ip: true  },
 ] as const;
+
+// ── New types ─────────────────────────────────────────────────────────────────
+
+export interface BugBountyProgram {
+  id: string;
+  name: string;
+  program_type: "company" | "wildcard" | "url";
+  platform: string;
+  in_scope: string[];
+  out_of_scope: string[];
+  max_bounty?: number;
+  notes: string;
+  scan_ids: string[];
+  created_at: string;
+}
+
+export interface WorkflowStage {
+  name: string;
+  description: string;
+  why: string;
+  tools: string[];
+  status: "locked" | "ready" | "running" | "complete" | "skipped";
+  findings_count: number;
+  completed_at: string | null;
+}
+
+export interface WorkflowRun {
+  id: string;
+  workflow_type: string;
+  target: string;
+  current_stage: number;
+  stages: WorkflowStage[];
+  created_at: string;
+}
+
+export interface Wordlist {
+  id: string;
+  name: string;
+  tag: string;
+  word_count: number;
+  source: string;
+  created_at: string;
+}
+
+export interface NucleiProfile {
+  id: string;
+  name: string;
+  selected_tags: string[];
+  selected_severities: string[];
+  exclude_tags: string[];
+  created_at: string;
+}
+
+export interface SavedRequest {
+  id: string;
+  name: string;
+  method: string;
+  url: string;
+  headers: [string, string][];
+  body?: string;
+  created_at: string;
+}
+
+export interface HttpResponse {
+  status: number;
+  status_text: string;
+  headers: [string, string][];
+  body: string;
+  duration_ms: number;
+  redirect_chain: string[];
+}
+
+export interface OsintResult {
+  id: string;
+  scan_id: string | null;
+  source: string;
+  query: string;
+  result_count: number | null;
+  url: string;
+  notes: string;
+  severity: string;
+  created_at: string;
+}
+
+export interface CloudAsset {
+  id: string;
+  scan_id: string;
+  provider: string;
+  url: string;
+  status: number;
+  accessible: boolean;
+  takeover_candidate: boolean;
+  checked_at: string;
+}

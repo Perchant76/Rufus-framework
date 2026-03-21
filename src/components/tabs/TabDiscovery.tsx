@@ -132,7 +132,7 @@ export default function TabDiscovery({ assets, logs, toolProgress, isRunning, sc
         <div>
           <SectionHdr title="Discovery Stats" />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-            <StatCard num={subdomains.length} label="Subdomains" color="var(--cyan)" />
+            <StatCard num={subdomains.length} label="Subdomains" color="var(--accent)" />
             <StatCard num={endpoints.length} label="Endpoints" color="var(--purple)" />
             <StatCard num={assets.filter(a => a.asset_type === "form").length} label="Forms Found" color="var(--yellow)" />
             <StatCard num={inScope.length} label="In-Scope" color="var(--green)" />
