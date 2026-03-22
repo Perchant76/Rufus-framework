@@ -94,7 +94,7 @@ export default function TabSecrets({ currentScanId, findings }: Props) {
             <div key={s.id} onClick={()=>setSelected(s)}
               style={{ padding:"10px 14px", borderBottom:"1px solid rgba(255,255,255,0.04)", cursor:"pointer", background:selected?.id===s.id?"rgba(232,0,26,0.06)":"transparent", borderLeft:`2px solid ${selected?.id===s.id?SEV_COLOR[s.severity]??"var(--accent)":"transparent"}` }}>
               <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
-                <span style={{ fontSize:9, fontWeight:700, background:`${SEV_COLOR[s.severity]???"#666"}22`, color:SEV_COLOR[s.severity]??"#666", border:`1px solid ${SEV_COLOR[s.severity]??"#666"}44`, padding:"1px 6px", borderRadius:3, letterSpacing:1 }}>{s.severity}</span>
+                <span style={{ fontSize:9, fontWeight:700, background:`${SEV_COLOR[s.severity]??"#666"}22`, color:SEV_COLOR[s.severity]??"#666", border:`1px solid ${SEV_COLOR[s.severity]??"#666"}44`, padding:"1px 6px", borderRadius:3, letterSpacing:1 }}>{s.severity}</span>
               </div>
               <div style={{ fontSize:11, color:"#f0f0f0", fontWeight:600, marginBottom:2 }}>{s.rule_name}</div>
               <div style={{ fontSize:10, color:"var(--text-dim)", fontFamily:"var(--font-mono)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{s.js_url.split('/').pop()}</div>
@@ -134,7 +134,7 @@ export default function TabSecrets({ currentScanId, findings }: Props) {
         ) : (
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:20 }}>
-              <span style={{ fontSize:10, fontWeight:700, background:`${SEV_COLOR[selected.severity]???"#666"}22`, color:SEV_COLOR[selected.severity]??"#666", border:`1px solid ${SEV_COLOR[selected.severity]??"#666"}44`, padding:"3px 10px", borderRadius:4, letterSpacing:1 }}>{selected.severity}</span>
+              <span style={{ fontSize:10, fontWeight:700, background:`${SEV_COLOR[selected.severity]??"#666"}22`, color:SEV_COLOR[selected.severity]??"#666", border:`1px solid ${SEV_COLOR[selected.severity]??"#666"}44`, padding:"3px 10px", borderRadius:4, letterSpacing:1 }}>{selected.severity}</span>
               <h2 style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{selected.rule_name}</h2>
             </div>
 

@@ -2,28 +2,8 @@
 import React from "react";
 import type { Severity } from "../../types";
 
-// ── Rufus SVG Logo ────────────────────────────────────────────────────────────
-export function RufusLogo({ size = 36 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 100 100" style={{ animation: "glow-pulse 3s infinite", flexShrink: 0 }}>
-      {/* Outer hexagon */}
-      <polygon points="50,4 93,27 93,73 50,96 7,73 7,27" fill="none" stroke="#e8001a" strokeWidth="3" />
-      {/* Inner hexagon */}
-      <polygon points="50,16 82,34 82,66 50,84 18,66 18,34" fill="#e8001a" opacity="0.12" />
-      {/* R letter */}
-      <text x="50" y="67" textAnchor="middle" fontFamily="Orbitron,monospace" fontWeight="900" fontSize="44" fill="#e8001a">R</text>
-      {/* Corner dots */}
-      {[[50,4],[93,27],[93,73],[50,96],[7,73],[7,27]].map(([cx,cy],i) => (
-        <circle key={i} cx={cx} cy={cy} r="3" fill="#e8001a" />
-      ))}
-      {/* Crosshair lines */}
-      <line x1="0" y1="50" x2="14" y2="50" stroke="#e8001a" strokeWidth="1.5" opacity="0.6" />
-      <line x1="86" y1="50" x2="100" y2="50" stroke="#e8001a" strokeWidth="1.5" opacity="0.6" />
-      <line x1="50" y1="0" x2="50" y2="12" stroke="#e8001a" strokeWidth="1.5" opacity="0.6" />
-      <line x1="50" y1="88" x2="50" y2="100" stroke="#e8001a" strokeWidth="1.5" opacity="0.6" />
-    </svg>
-  );
-}
+// ── Rufus Logo — re-exported from RufusLogo.tsx ───────────────────────────────
+export { RufusLogo, RufusLogoLarge } from "./RufusLogo";
 
 // ── Severity Badge ────────────────────────────────────────────────────────────
 const SEV_STYLES: Record<Severity, React.CSSProperties> = {

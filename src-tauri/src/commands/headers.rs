@@ -20,15 +20,19 @@ pub async fn check_headers_for_url(url: &str) -> Vec<HeaderFinding> {
     let mut findings = Vec::new();
 
     // Fetch headers via curl
-    let output = tokio::process::Command::new("curl")
+    let stdout_bytes: Vec<u8> = match tokio::process::Command::new("curl")
         .args(["-sSIL", "--max-time", "10", "-A",
                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                url])
-        .output().await.unwrap_or_default();
+        .output().await
+    {
+        Ok(out) => out.stdout,
+        Err(_)  => return findings,
+    };
 
-    if !output.status.success() { return findings; }
-    let raw = String::from_utf8_lossy(&output.stdout).to_lowercase();
-    let raw_orig = String::from_utf8_lossy(&output.stdout).to_string();
+    if stdout_bytes.is_empty() { return findings; }
+    let raw = String::from_utf8_lossy(&stdout_bytes).to_lowercase();
+    let raw_orig = String::from_utf8_lossy(&stdout_bytes).to_string();
 
     let get_header = |name: &str| -> Option<String> {
         for line in raw_orig.lines() {
@@ -124,14 +128,18 @@ pub async fn check_headers_for_url(url: &str) -> Vec<HeaderFinding> {
 
     // ── CORS checks ──────────────────────────────────────────────────────────
     // Send with Origin: https://evil.attacker.com to check reflection
-    let cors_output = tokio::process::Command::new("curl")
+    let cors_stdout: Vec<u8> = match tokio::process::Command::new("curl")
         .args(["-sSIL", "--max-time", "10",
                "-H", "Origin: https://evil.attacker-penforge.com",
                "-H", "Access-Control-Request-Method: GET",
                url])
-        .output().await.unwrap_or_default();
+        .output().await
+    {
+        Ok(out) => out.stdout,
+        Err(_)  => vec![],
+    };
 
-    let cors_raw = String::from_utf8_lossy(&cors_output.stdout).to_string();
+    let cors_raw = String::from_utf8_lossy(&cors_stdout).to_string();
     let cors_lower = cors_raw.to_lowercase();
 
     let acao = cors_raw.lines()
