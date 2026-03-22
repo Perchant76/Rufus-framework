@@ -414,4 +414,59 @@ impl Store {
         if !path.exists() { return Ok(vec![]); }
         self.read_json(&path)
     }
+
+    fn session_path(&self, scan_id: &str) -> std::path::PathBuf {
+        self.dir.join(format!("{}.session.json", scan_id))
+    }
+
+    fn sessions_index_path(&self) -> std::path::PathBuf {
+        self.dir.join("sessions.json")
+    }
+
+    pub fn save_session(&self, scan_id: &str, data: &str) -> anyhow::Result<()> {
+        std::fs::write(self.session_path(scan_id), data)?;
+        // Update index
+        let mut index: Vec<String> = self.read_json_or_default(&self.sessions_index_path());
+        if !index.contains(&scan_id.to_string()) {
+            index.push(scan_id.to_string());
+            self.write_json(&self.sessions_index_path(), &index)?;
+        }
+        Ok(())
+    }
+
+    pub fn load_session(&self, scan_id: &str) -> anyhow::Result<Option<String>> {
+        let path = self.session_path(scan_id);
+        if !path.exists() { return Ok(None); }
+        Ok(Some(std::fs::read_to_string(path)?))
+    }
+
+    pub fn list_sessions(&self) -> anyhow::Result<Vec<String>> {
+        let index: Vec<String> = self.read_json_or_default(&self.sessions_index_path());
+        let mut sessions = Vec::new();
+        for id in &index {
+            if let Ok(Some(s)) = self.load_session(id) {
+                sessions.push(s);
+            }
+        }
+        Ok(sessions)
+    }
+
+    pub fn delete_session(&self, scan_id: &str) -> anyhow::Result<()> {
+        let path = self.session_path(scan_id);
+        if path.exists() { std::fs::remove_file(path)?; }
+        let mut index: Vec<String> = self.read_json_or_default(&self.sessions_index_path());
+        index.retain(|id| id != scan_id);
+        self.write_json(&self.sessions_index_path(), &index)
+    }
+
+    pub fn get_findings_for_scan(&self, scan_id: &str) -> anyhow::Result<Vec<crate::db::models::VulnFinding>> {
+        self.list_findings(scan_id)
+    }
+
+    pub fn update_scan_progress(&self, scan_id: &str, phase: u8) -> anyhow::Result<()> {
+        // Checkpoint: save which phase we're on so we can resume
+        self.save_session(scan_id, &format!(r#"{{"scan_id":"{}","current_phase":{},"completed_phases":[]}}"#, scan_id, phase))?;
+        Ok(())
+    }
+
 }

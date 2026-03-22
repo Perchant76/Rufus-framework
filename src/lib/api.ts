@@ -117,3 +117,31 @@ export const checkTakeover = (subdomains: string[]): Promise<any[]> => invoke("c
 
 // ── Triage ────────────────────────────────────────────────────────────────────
 export const updateFindingTriage = (finding: any): Promise<void> => invoke("update_finding_triage", { finding });
+
+// ── JS Secret Scanner ─────────────────────────────────────────────────────────
+export const scanJsForSecrets = (scanId: string, jsUrls: string[]) =>
+  invoke("scan_js_for_secrets", { scanId, jsUrls });
+
+// ── Header & CORS ─────────────────────────────────────────────────────────────
+export const checkSecurityHeaders = (scanId: string, urls: string[]) =>
+  invoke("check_security_headers", { scanId, urls });
+
+// ── Phase Control ─────────────────────────────────────────────────────────────
+export const getPhaseStatus = () => invoke("get_phase_status");
+export const pauseScan      = () => invoke("pause_scan");
+export const resumeScan     = () => invoke("resume_scan");
+export const skipPhase      = (phaseId: number) => invoke("skip_phase", { phaseId });
+export const getAllPhaseStatuses = () => invoke("get_all_phase_statuses");
+
+// ── Session Persistence ───────────────────────────────────────────────────────
+export const saveScanSession      = (scanId: string, currentPhase: number, completedPhases: number[]) =>
+  invoke("save_scan_session", { scanId, currentPhase, completedPhases });
+export const loadScanSession      = (scanId: string) => invoke("load_scan_session", { scanId });
+export const listInterruptedScans = () => invoke("list_interrupted_scans");
+export const clearScanSession     = (scanId: string) => invoke("clear_scan_session", { scanId });
+
+// ── PenForge Export ───────────────────────────────────────────────────────────
+export const exportToPtsync = (scanId: string, operatorName: string, outputPath: string, severityFilter: string[]) =>
+  invoke("export_to_ptsync", { scanId, operatorName, outputPath, severityFilter });
+export const getPtsyncPreview = (scanId: string) =>
+  invoke("get_ptsync_preview", { scanId });

@@ -13,6 +13,9 @@ pub struct AppState {
     pub store: db::Store,
     pub active_scan_id: Option<String>,
     pub scan_running: bool,
+    pub phase_tracker: Option<commands::phase_control::PhaseTracker>,
+    pub rate_limit_ms: u64,  // global delay between requests
+    pub paused: bool,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -28,7 +31,7 @@ pub fn run() {
                 .expect("Failed to resolve app data dir")
                 .join("scans");
             let store = db::Store::new(data_dir).expect("Failed to create data directory");
-            app.manage(Mutex::new(AppState { store, active_scan_id: None, scan_running: false }));
+            app.manage(Mutex::new(AppState { store, active_scan_id: None, scan_running: false, phase_tracker: None, rate_limit_ms: 200, paused: false }));
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -92,6 +95,24 @@ pub fn run() {
             commands::cloud::check_takeover,
             // Triage
             commands::triage::update_finding_triage,
+            // JS Secret Scanning
+            commands::secrets::scan_js_for_secrets,
+            // Header & CORS Analysis
+            commands::headers::check_security_headers,
+            // Phase Control
+            commands::phase_control::get_phase_status,
+            commands::phase_control::pause_scan,
+            commands::phase_control::resume_scan,
+            commands::phase_control::skip_phase,
+            commands::phase_control::get_all_phase_statuses,
+            // Session Persistence
+            commands::session::save_scan_session,
+            commands::session::load_scan_session,
+            commands::session::list_interrupted_scans,
+            commands::session::clear_scan_session,
+            // PenForge Export
+            commands::ptsync::export_to_ptsync,
+            commands::ptsync::get_ptsync_preview,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Tauri application");

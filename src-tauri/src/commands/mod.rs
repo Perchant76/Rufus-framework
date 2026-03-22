@@ -1,9 +1,8 @@
-// src-tauri/src/commands/mod.rs
 pub mod scan;
 pub mod findings;
-pub mod tools;
 pub mod comparison;
 pub mod export;
+pub mod tools;
 pub mod programs;
 pub mod workflows;
 pub mod wordlists;
@@ -12,3 +11,8 @@ pub mod replay;
 pub mod osint;
 pub mod cloud;
 pub mod triage;
+pub mod secrets;
+pub mod headers;
+pub mod phase_control;
+pub mod session;
+pub mod ptsync;
